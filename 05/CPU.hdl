@@ -40,4 +40,45 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+    Not(in = instruction[15], out = isA);
+    Not(in = isA, out = isC);
+
+    //指令暫存器
+    Or(a = instruction[5], b = isA, out = isLoaDA);      //instruction[5]決定是否寫入A暫存器
+    //如果是C指令 接受的是上一次指令返回的值 每次指令都直接一個值 但是想要進行兩個數據的相加 能需要拿到上一個指令 用上一個指令和當前指令相加
+    //如果是A指令 則A暫存器輸入值直接就是當前instruction
+    Mux16(a = instruction, b = outtM, sel = isC, out = intoA);
+    ARegister(in = intoA, load = isLoaDA, out[0..14] = addressM, out = A);
+
+
+    And(a = instruction[12], b = instruction[15], out = AorM);
+
+    Mux16(a = A, b = inM, sel = AorM, out = AM);
+
+    ALU(x = D, y = AM, zx = instruction[11], nx = instruction[10], zy = instruction[9], ny = instruction[8], f = instruction[7], no = instruction[6], out = outtM, out = outM, zr = zr, ng = ng);
+
+    //數據暫存器
+    And(a = instruction[4], b = isC, out = isIntoD);      //instruction[4]決定是否寫入D暫存器
+    DRegister(in = outtM, load = isIntoD, out = D);
+
+    //d-位域
+    And(a = instruction[3], b = instruction[15], out = writeM);
+
+    //j-位域
+    Or(a = zr, b = ng, out = isNotPositive);
+    Not(in = isNotPositive, out = isPositive);
+    And(a = instruction[0], b = instruction[15], out = isJGT);    //out > 0
+    And(a = isJGT, b = isPositive, out = isJGT2);
+
+    And(a = instruction[1], b = instruction[15], out = isJEQ);    //out = 0
+    And(a = isJEQ, b = zr, out = isJEQ2);
+        
+    And(a = instruction[2], b = instruction[15], out = isJLT);    //out < 0
+    And(a = isJLT, b = ng, out = isJLT2);
+        
+    Or(a = isJGT2, b = isJEQ2, out = isNotJEQ2JGT2);        
+    Or(a = isNotJEQ2JGT2, b = isJLT2, out = isJump);
+
+    //地址暫存器
+    PC(in = A, load = isJump, inc = true, reset = reset, out[0..14] = pc);
 }

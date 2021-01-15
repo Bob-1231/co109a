@@ -1,4 +1,4 @@
-# HW1
+# HW01 - 第一章的前六題完成
 ### 1. Not
 * Picture   
 ![not](not.jpg)
@@ -22,6 +22,7 @@ CHIP Not {
     Nand (a=in, b=in, out=out);
 }
 </pre>
+---
 ### 2. And
 * Picture   
 ![and](and.jpg)
@@ -47,6 +48,7 @@ CHIP And {
     Not (in=anandb, out=out);
 }
 </pre>
+---
 ### 3. Or
 * Picture   
 ![or](or.jpg)   
@@ -73,6 +75,7 @@ CHIP Or {
     Nand (a=nota, b=notb, out=out);
 }
 </pre>
+---
 ### 4. Xor
 * Picture   
 ![xor](xor.jpg)   
@@ -100,6 +103,7 @@ CHIP Xor {
     Or (a=aandnotb, b=notaandb, out=out);
 }
 </pre>
+---
 ### 5. Mux
 * Picture   
 ![mux](mux.jpg)   
@@ -126,6 +130,7 @@ CHIP Mux {
     Or (a=aandnotsel, b=bandsel, out=out);
 }
 </pre>
+---
 ### 6. DMux
 * Picture   
 ![dmux](dmux.jpg)   

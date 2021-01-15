@@ -1,6 +1,7 @@
-# HW02
+# HW02 - 第一章完成，證明迪摩根定律第二式
 ### 狄摩根定律
-![dmg](dmg.jpg)
+![dmg](dmg.jpg)   
+---
 ### 1. Not16
 * Picture   
 ![not16](not16.jpg)   
@@ -40,6 +41,7 @@ CHIP Not16 {
     Not(in = in[15], out = out[15]);
 }
 </pre>
+---
 ### 2. And16
 * Picture   
 ![and16](and16.jpg)      
@@ -79,6 +81,7 @@ CHIP And16 {
     And(a = a[15], b = b[15], out = out[15]);
 }
 </pre>
+---
 ### 3. OR16
 * Picture   
 ![or16](or16.jpg)
@@ -118,6 +121,7 @@ CHIP Or16 {
     Or(a = a[15], b = b[15], out = out[15]);
 }
 </pre>
+---
 ### 4. Mux16
 * Picture   
 ![mux16](mux16.jpg)   
@@ -158,6 +162,7 @@ CHIP Mux16 {
     Mux(a = a[15], b = b[15], sel = sel, out = out[15]);
 }
 </pre>
+---
 ### 5. Or8Way
 * Picture   
 ![or8way](or8way.jpg)   
@@ -188,6 +193,7 @@ CHIP Or8Way {
     Or(a = or0123, b = or4567, out = out);
 }
 </pre>
+---
 ### 6. Mux4Way16
 * Picture   
 ![mux4way16](mux4way16.jpg)   
@@ -215,5 +221,97 @@ CHIP Mux4Way16 {
     Mux16(a = a, b = b, sel = sel[0], out = muxab);
     Mux16(a = c, b = d, sel = sel[0], out = muxcd);
     Mux16(a = muxab, b = muxcd, sel = sel[1], out = out);
+}
+</pre>
+---
+### 7. Mux8Way16
+* Picture   
+![mux8way16](mux8way16.jpg)   
+* Code   
+<pre>
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux8Way16.hdl
+
+/**
+ * 8-way 16-bit multiplexor:
+ * out = a if sel == 000
+ *       b if sel == 001
+ *       etc.
+ *       h if sel == 111
+ */
+
+CHIP Mux8Way16 {
+    IN a[16], b[16], c[16], d[16],
+       e[16], f[16], g[16], h[16],
+       sel[3];
+    OUT out[16];
+
+    PARTS:
+    // Put your code here:
+    Mux4Way16(a = a, b = b, c = c, d = d, sel = sel[0..1], out = muxad);
+    Mux4Way16(a = e, b = f, c = g, d = h, sel = sel[0..1], out = muxeh);
+    Mux16(a = muxad, b = muxeh, sel = sel[2], out = out);
+}
+</pre>   
+---
+### 8. DMux4Way
+* Picture   
+![dmux4way](dmux4way.jpg)   
+* Code   
+<pre>
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/DMux4Way.hdl
+
+/**
+ * 4-way demultiplexor:
+ * {a, b, c, d} = {in, 0, 0, 0} if sel == 00
+ *                {0, in, 0, 0} if sel == 01
+ *                {0, 0, in, 0} if sel == 10
+ *                {0, 0, 0, in} if sel == 11
+ */
+
+CHIP DMux4Way {
+    IN in, sel[2];
+    OUT a, b, c, d;
+
+    PARTS:
+    // Put your code here:
+    DMux(in = in, sel = sel[1], a = dma, b = dmb);
+    DMux(in = dma, sel = sel[0], a = a , b = b);
+    DMux(in = dmb, sel = sel[0], a = c, b = d);
+}
+</pre>   
+---
+### 9. DMux8Way
+* Picture   
+![dmux8way](dmux8way.jpg)   
+* Code   
+<pre>
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/DMux8Way.hdl
+
+/**
+ * 8-way demultiplexor:
+ * {a, b, c, d, e, f, g, h} = {in, 0, 0, 0, 0, 0, 0, 0} if sel == 000
+ *                            {0, in, 0, 0, 0, 0, 0, 0} if sel == 001
+ *                            etc.
+ *                            {0, 0, 0, 0, 0, 0, 0, in} if sel == 111
+ */
+
+CHIP DMux8Way {
+    IN in, sel[3];
+    OUT a, b, c, d, e, f, g, h;
+
+    PARTS:
+    // Put your code here:
+    DMux(in = in, sel = sel[2], a = dma, b = dmb);
+    DMux4Way(in = dma, sel = sel[0..1], a = a, b = b, c = c, d = d);
+    DMux4Way(in = dmb, sel = sel[0..1], a = e, b = f, c = g, d = h);
 }
 </pre>
